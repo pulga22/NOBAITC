@@ -29,11 +29,8 @@ public class MainController implements Initializable {
         welcomeLabel.setText("Bienvenido al Sistema NOBA-ITC");
 
         String welcomeText = """
-                Este sistema te permite generar y analizar fracciones para diseños factoriales.
-                
                 Módulos disponibles:
-                - Generador NONBPA - Fracciones de niveles mixtos puros
-                - [Futuros módulos experimentales]
+                - Generador NONBPA
                 
                 Selecciona un módulo del panel izquierdo para comenzar.
                 """;
@@ -52,7 +49,7 @@ public class MainController implements Initializable {
         );
 
         Button futureModuleButton = createModuleButton(
-                "Módulo Futuro",
+                "Otro",
                 "Próximamente disponible",
                 this::showComingSoon
         );

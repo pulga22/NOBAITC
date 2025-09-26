@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 
 public class NONBPAController implements Initializable {
 
-    // Sección de entrada de datos
     @FXML private VBox factorsInputContainer;
     @FXML private Button addFactorButton;
     @FXML private Button removeFactorButton;
@@ -31,14 +30,12 @@ public class NONBPAController implements Initializable {
     @FXML private Button generateButton;
     @FXML private Button clearButton;
 
-    // Sección de información del diseño
     @FXML private Label trLabel;
     @FXML private Label factorsCountLabel;
     @FXML private Label lcmLabel;
     @FXML private Label glLabel;
     @FXML private Label sfMinLabel;
 
-    // Sección de resultados
     @FXML private TableView<FractionResult> resultsTable;
     @FXML private TableColumn<FractionResult, Integer> fractionNumberColumn;
     @FXML private TableColumn<FractionResult, String> fractionDataColumn;

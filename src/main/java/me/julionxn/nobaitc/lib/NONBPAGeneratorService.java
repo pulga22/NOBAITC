@@ -223,9 +223,6 @@ public class NONBPAGeneratorService {
         return (a * b) / gcd(a, b);
     }
 
-    /**
-     * Calcula GCD usando algoritmo de Euclides
-     */
     private int gcd(int a, int b) {
         while (b > 0) {
             int temp = b;

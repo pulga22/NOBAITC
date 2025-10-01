@@ -40,8 +40,8 @@ public class MainController implements Initializable {
         infoTextArea.setWrapText(true);
     }
 
+    // Crear botones para cada módulo
     private void setupModuleButtons() {
-        // Crear botones para cada módulo
         Button nonbpaButton = createModuleButton(
                 "Generador NONBPA",
                 "Genera fracciones semi-balanceadas\npara diseños de niveles mixtos",

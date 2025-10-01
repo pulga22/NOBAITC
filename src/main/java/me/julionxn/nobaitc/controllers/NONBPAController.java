@@ -3,14 +3,21 @@ package me.julionxn.nobaitc.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import me.julionxn.nobaitc.MainApplication;
 import me.julionxn.nobaitc.lib.NONBPAGeneratorService;
 import me.julionxn.nobaitc.models.FractionResult;
+import me.julionxn.nobaitc.util.ClipboardHelper;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -66,16 +73,60 @@ public class NONBPAController implements Initializable {
 
         // Configurar tabla de resultados
         resultsTable.setItems(fractionResults);
+        resultsTable.setRowFactory(val -> {
+            TableRow<FractionResult> row = new TableRow<>();
 
-        // Configurar área de log
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    FractionResult rowData = row.getItem();
+                    copyFractionToClipboard(rowData);
+                    openDetailsWindow(rowData);
+                }
+            });
+
+            return row;
+        });
+
         logTextArea.setEditable(false);
         logTextArea.setWrapText(true);
 
-        // Listener para habilitar/deshabilitar campo de fracciones personalizadas
         customFractionsRadio.selectedProperty().addListener((obs, oldVal, newVal) -> {
             customFractionsField.setDisable(!newVal);
         });
         customFractionsField.setDisable(true);
+    }
+
+    private void copyFractionToClipboard(FractionResult fractionResult){
+        StringBuilder sb = new StringBuilder();
+        double[][] data = fractionResult.getFraction();
+        for (double[] row : data) {
+            for (int i = 0; i < row.length; i++) {
+                sb.append(row[i]);
+                if (i != row.length - 1) {
+                    sb.append("\t");
+                }
+            }
+            sb.append("\n");
+        }
+        ClipboardHelper.copyToClipboard(sb.toString());
+    }
+
+    private void openDetailsWindow(FractionResult data) {
+        try {
+            FXMLLoader loader = new FXMLLoader(MainApplication.getResourceURL("fxml/fraction-result-details.fxml"));
+            Parent root = loader.load();
+
+            FractionResultDetailsController controller = loader.getController();
+            controller.setData(data);
+
+            Stage stage = new Stage();
+            stage.setTitle("Details");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setupTableColumns() {
@@ -111,7 +162,6 @@ public class NONBPAController implements Initializable {
     }
 
     private void setupValidation() {
-        // Validación numérica para campos
         fractionSizeField.textProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal.matches("\\d*")) {
                 fractionSizeField.setText(newVal.replaceAll("[^\\d]", ""));

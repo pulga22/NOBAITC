@@ -14,9 +14,8 @@ public class MainApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getResourceURL("fxml/main-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 1200, 800);
+        Scene scene = new Scene(fxmlLoader.load(), 600, 400);
 
-        // Configuración de la ventana principal
         stage.setTitle("Diseño Experimental - Generador de Fracciones");
         stage.setScene(scene);
         stage.setMinWidth(800);

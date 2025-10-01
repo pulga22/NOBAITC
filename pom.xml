@@ -11,6 +11,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <javafx.version>20.0.2</javafx.version>
+        <controlsfx.version>11.2.1</controlsfx.version>
         <junit.version>5.10.2</junit.version>
     </properties>
 
@@ -18,12 +20,17 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>17.0.6</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>17.0.6</version>
+            <version>${javafx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.controlsfx</groupId>
+            <artifactId>controlsfx</artifactId>
+            <version>${controlsfx.version}</version>
         </dependency>
 
         <dependency>
@@ -57,7 +64,6 @@
                 <version>0.0.8</version>
                 <executions>
                     <execution>
-                        <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>me.julionxn.nobaitc/me.julionxn.nobaitc.MainApplication</mainClass>
@@ -67,6 +73,14 @@
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>
+                            <options>
+                                <option>--add-exports=javafx.base/com.sun.javafx.event=org.controlsfx.controls</option>
+                                <option>--add-exports=javafx.controls/com.sun.javafx.scene.control.behavior=org.controlsfx.controls</option>
+                                <option>--add-exports=javafx.controls/com.sun.javafx.scene.control=org.controlsfx.controls</option>
+                                <option>--add-exports=javafx.graphics/com.sun.javafx.scene=org.controlsfx.controls</option>
+                                <option>--add-opens=javafx.controls/javafx.scene.control.skin=org.controlsfx.controls</option>
+                                <option>--add-opens=javafx.graphics/javafx.scene.control.skin=org.controlsfx.controls</option>
+                            </options>
                         </configuration>
                     </execution>
                 </executions>

@@ -9,7 +9,7 @@
     <top>
         <VBox spacing="10.0">
             <children>
-                <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Generador NONBPA - Fracciones de Niveles Mixtos Puros" />
+                <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Experimental Tools Design" />
                 <Separator />
             </children>
             <padding>
@@ -28,7 +28,7 @@
                                 <!-- Sección de factores -->
                                 <VBox spacing="10.0">
                                     <children>
-                                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="1. Configuración de Factores" />
+                                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Configuración de factores por niveles de cada factor" />
                                         <HBox spacing="10.0">
                                             <children>
                                                 <VBox spacing="5.0" HBox.hgrow="ALWAYS">
@@ -55,10 +55,10 @@
                                                 <VBox spacing="5.0" style="-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-radius: 5; -fx-padding: 15;">
                                                     <children>
                                                         <Label style="-fx-font-weight: bold;" text="Información del Diseño" />
-                                                        <Label fx:id="trLabel" text="TR: -" />
+                                                        <Label fx:id="trLabel" text="Número de corridas (TR): -" />
                                                         <Label fx:id="factorsCountLabel" text="Factores: -" />
-                                                        <Label fx:id="lcmLabel" text="LCM: -" />
-                                                        <Label fx:id="glLabel" text="GL: -" />
+                                                        <Label fx:id="lcmLabel" text="Mínimo común múltiplo (LCM): -" />
+                                                        <Label fx:id="glLabel" text="Grados de libertad (GL): -" />
                                                         <Label fx:id="sfMinLabel" text="SF min: -" />
                                                     </children>
                                                 </VBox>
@@ -72,7 +72,7 @@
                                 <!-- Sección de parámetros de fracción -->
                                 <VBox spacing="10.0">
                                     <children>
-                                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="2. Parámetros de Fracción" />
+                                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Parámetros de la fracción por parámetros del método NONBPA" />
                                         <GridPane hgap="15.0" vgap="10.0">
                                             <columnConstraints>
                                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="150.0" />
@@ -102,7 +102,7 @@
                                 <!-- Sección tipo de fracciones -->
                                 <VBox spacing="10.0">
                                     <children>
-                                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="3. Tipo de Fracciones" />
+                                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Tipo de Fracciones" />
                                         <VBox spacing="5.0">
                                             <children>
                                                 <RadioButton fx:id="randomFractionsRadio" selected="true" text="Fracciones aleatorias" />
@@ -141,7 +141,7 @@
                 <!-- Panel inferior: Resultados -->
                 <VBox spacing="10.0">
                     <children>
-                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Resultados" />
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Resultados por fracciones NONBPA" />
                         <SplitPane dividerPositions="0.7" orientation="HORIZONTAL">
                             <items>
                                 <!-- Tabla de resultados -->
@@ -154,6 +154,7 @@
                                                 <TableColumn fx:id="fractionDataColumn" prefWidth="300.0" text="Datos" />
                                                 <TableColumn fx:id="gbmColumn" prefWidth="80.0" text="GBM" />
                                                 <TableColumn fx:id="j2Column" prefWidth="80.0" text="J2" />
+                                                <TableColumn fx:id="vifsColumn" prefWidth="150.0" text="VIF's" />
                                             </columns>
                                         </TableView>
                                     </children>

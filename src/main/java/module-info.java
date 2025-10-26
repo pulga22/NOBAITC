@@ -12,5 +12,6 @@ module me.julionxn.nobaitc {
     opens me.julionxn.nobaitc to javafx.fxml;
     opens me.julionxn.nobaitc.controllers to javafx.fxml;
     opens me.julionxn.nobaitc.models to javafx.fxml, javafx.base;
+    exports me.julionxn.nobaitc.lib.nonbpa;
 
 }

@@ -1,19 +1,24 @@
 package me.julionxn.nobaitc.models;
 
 import javafx.beans.property.*;
+import me.julionxn.nobaitc.util.FormatHelper;
 
 public class FractionResult {
     private final IntegerProperty fractionNumber;
     private final StringProperty fractionData;
+    private final StringProperty vifsData;
     private final DoubleProperty gbm;
     private final DoubleProperty j2;
+    private final double[] vifs;
     private final double[][] fraction; // Datos completos de la fracción
 
-    public FractionResult(int fractionNumber, String fractionData, double gbm, double j2, double[][] fraction) {
+    public FractionResult(int fractionNumber, double gbm, double j2, double[] vifs, double[][] fraction) {
         this.fractionNumber = new SimpleIntegerProperty(fractionNumber);
-        this.fractionData = new SimpleStringProperty(fractionData);
+        this.fractionData = new SimpleStringProperty(FormatHelper.formatMatrix(fraction));
+        this.vifsData = new SimpleStringProperty(FormatHelper.formatVector(vifs));
         this.gbm = new SimpleDoubleProperty(gbm);
         this.j2 = new SimpleDoubleProperty(j2);
+        this.vifs = vifs;
         this.fraction = fraction;
     }
 
@@ -30,8 +35,16 @@ public class FractionResult {
         return fractionData.get();
     }
 
+    public String getVifsData() {
+        return vifsData.get();
+    }
+
     public StringProperty fractionDataProperty() {
         return fractionData;
+    }
+
+    public StringProperty vifsDataProperty() {
+        return vifsData;
     }
 
     public double getGbm() {
@@ -54,6 +67,8 @@ public class FractionResult {
         return fraction;
     }
 
+    public double[] getVifs() { return vifs; }
+
     // Setters
     public void setFractionNumber(int fractionNumber) {
         this.fractionNumber.set(fractionNumber);
@@ -70,4 +85,5 @@ public class FractionResult {
     public void setJ2(double j2) {
         this.j2.set(j2);
     }
+
 }

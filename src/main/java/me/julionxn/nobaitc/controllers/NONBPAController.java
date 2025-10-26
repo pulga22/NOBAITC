@@ -13,6 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import me.julionxn.nobaitc.MainApplication;
+import me.julionxn.nobaitc.lib.MatlabFunctions;
 import me.julionxn.nobaitc.lib.NONBPAGeneratorService;
 import me.julionxn.nobaitc.models.FractionResult;
 import me.julionxn.nobaitc.util.ClipboardHelper;
@@ -48,6 +49,7 @@ public class NONBPAController implements Initializable {
     @FXML private TableColumn<FractionResult, String> fractionDataColumn;
     @FXML private TableColumn<FractionResult, Double> gbmColumn;
     @FXML private TableColumn<FractionResult, Double> j2Column;
+    @FXML private TableColumn<FractionResult, Double> vifsColumn;
     @FXML private TextArea logTextArea;
 
     private NONBPAGeneratorService generatorService;
@@ -102,11 +104,9 @@ public class NONBPAController implements Initializable {
         for (double[] row : data) {
             for (int i = 0; i < row.length; i++) {
                 sb.append(row[i]);
-                if (i != row.length - 1) {
-                    sb.append("\t");
-                }
+                String toAppend = i != row.length - 1 ? "\t" : "\n";
+                sb.append(toAppend);
             }
-            sb.append("\n");
         }
         ClipboardHelper.copyToClipboard(sb.toString());
     }
@@ -134,6 +134,7 @@ public class NONBPAController implements Initializable {
         fractionDataColumn.setCellValueFactory(new PropertyValueFactory<>("fractionData"));
         gbmColumn.setCellValueFactory(new PropertyValueFactory<>("gbm"));
         j2Column.setCellValueFactory(new PropertyValueFactory<>("j2"));
+        vifsColumn.setCellValueFactory(new PropertyValueFactory<>("vifsData"));
 
         // Formatear columnas numéricas
         gbmColumn.setCellFactory(tc -> new TableCell<FractionResult, Double>() {
@@ -231,15 +232,15 @@ public class NONBPAController implements Initializable {
 
             int tr = Arrays.stream(design).reduce(1, (a, b) -> a * b);
             int factors = design.length;
-            int lcm = generatorService.calculateLCM(design);
+            int lcm = MatlabFunctions.calculateLCM(design);
             int gl = factors + 2;
             int maxLevel = Arrays.stream(design).max().orElse(0);
             int sfMin = Math.max(gl, maxLevel);
 
-            trLabel.setText("TR: " + tr);
+            trLabel.setText("Número de corridas (TR): " + tr);
             factorsCountLabel.setText("Factores: " + factors);
-            lcmLabel.setText("LCM: " + lcm);
-            glLabel.setText("GL: " + gl);
+            lcmLabel.setText("Mínimo común múltiplo (LCM): " + lcm);
+            glLabel.setText("Grados de libertad (GL): " + gl);
             sfMinLabel.setText("SF min: " + sfMin);
 
             // Validar si es un diseño válido
@@ -253,10 +254,10 @@ public class NONBPAController implements Initializable {
     }
 
     private void clearDesignInfo() {
-        trLabel.setText("TR: -");
+        trLabel.setText("Número de corridas (TR): -");
         factorsCountLabel.setText("Factores: -");
-        lcmLabel.setText("LCM: -");
-        glLabel.setText("GL: -");
+        lcmLabel.setText("Mínimo común múltiplo (LCM): -");
+        glLabel.setText("Grados de libertad (GL): -");
         sfMinLabel.setText("SF min: -");
     }
 

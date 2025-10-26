@@ -43,13 +43,23 @@ public class MainController implements Initializable {
     // Crear botones para cada módulo
     private void setupModuleButtons() {
         Button nonbpaButton = createModuleButton(
-                "Generador NONBPA",
-                "Genera fracciones semi-balanceadas\npara diseños de niveles mixtos",
+                "Experimental Designs Tools",
+                "Genera fracciones semi-balanceadas\nsemi-ortogonales",
+                """
+                Módulo: Experimental Designs Tools
+                
+                Este método aplica para los diseños de niveles mixtos puros,
+                estos tiene como característica principal que el tamaño de la matriz del modelo (TR)
+                es igual al mínimo común múltiplo (LCM) de los niveles y poseen la capacidad para
+                generar fracciones semi-balanceadas semi-ortogonales.
+                Este modulo esta programado para generar fracciones de diseños que poseen de 2 a 9 factores.
+                """,
                 this::loadNONBPAModule
         );
 
         Button futureModuleButton = createModuleButton(
                 "Otro",
+                "Próximamente disponible",
                 "Próximamente disponible",
                 this::showComingSoon
         );
@@ -58,31 +68,20 @@ public class MainController implements Initializable {
         moduleButtonsContainer.getChildren().addAll(nonbpaButton, futureModuleButton);
     }
 
-    private Button createModuleButton(String title, String description, Runnable action) {
+    private Button createModuleButton(String title, String smallDescription, String moduleDescription, Runnable action) {
         Button button = new Button();
         button.setText(title);
-        button.setTooltip(new Tooltip(description));
+        button.setTooltip(new Tooltip(smallDescription));
         button.setMaxWidth(Double.MAX_VALUE);
         button.getStyleClass().add("module-button");
         button.setOnAction(e -> action.run());
+        button.setOnMouseEntered(e -> infoTextArea.setText(moduleDescription));
         return button;
     }
 
     @FXML
     private void loadNONBPAModule() {
         try {
-            infoTextArea.setText("""
-                Módulo: Generador NONBPA
-                
-                Este módulo genera fracciones semi-balanceadas y semi-ortogonales
-                para diseños factoriales de niveles mixtos puros.
-                
-                Características:
-                • Soporta de 2 a 9 factores
-                • Calcula métricas GBM y J2
-                • Permite fracciones aleatorias o personalizadas
-                """);
-
             FXMLLoader loader = new FXMLLoader(MainApplication.getResourceURL("fxml/nonbpa-view.fxml"));
             mainBorderPane.setCenter(loader.load());
         } catch (IOException e) {

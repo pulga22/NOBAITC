@@ -269,4 +269,181 @@ public class MatlabFunctions {
         return result;
     }
 
+    /**
+     * Extrae la parte triangular inferior de una matriz
+     * Equivalente a tril() de MATLAB
+     * @param matrix Matriz de entrada
+     * @return Matriz triangular inferior
+     */
+    public static double[][] tril(double[][] matrix) {
+        int rows = matrix.length;
+        int cols = matrix[0].length;
+        double[][] result = new double[rows][cols];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j <= i && j < cols; j++) {
+                result[i][j] = matrix[i][j];
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Calcula el coeficiente binomial (n choose k)
+     * Equivalente a nchoosek() de MATLAB
+     * @param n Total de elementos
+     * @param k Elementos a escoger
+     * @return Número de combinaciones
+     */
+    public static int nchoosek(int n, int k) {
+        if (k > n || k < 0) return 0;
+        if (k == 0 || k == n) return 1;
+        if (k > n - k) k = n - k; // Optimización
+
+        long result = 1;
+        for (int i = 0; i < k; i++) {
+            result = result * (n - i) / (i + 1);
+        }
+
+        return (int) result;
+    }
+
+    /**
+     * Encuentra el valor máximo en un array
+     * @param array Array de entrada
+     * @return Valor máximo
+     */
+    public static double max(double[] array) {
+        if (array == null || array.length == 0) return 0;
+
+        double max = array[0];
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] > max) {
+                max = array[i];
+            }
+        }
+        return max;
+    }
+
+    /**
+     * Encuentra el valor máximo en un rango del array
+     * @param array Array de entrada
+     * @param start Índice de inicio (inclusivo)
+     * @param end Índice de fin (exclusivo)
+     * @return Valor máximo en el rango
+     */
+    public static double maxInRange(double[] array, int start, int end) {
+        if (array == null || start >= end || start < 0) return 0;
+
+        end = Math.min(end, array.length);
+        double max = array[start];
+
+        for (int i = start + 1; i < end; i++) {
+            if (array[i] > max) {
+                max = array[i];
+            }
+        }
+        return max;
+    }
+
+    /**
+     * Encuentra el valor máximo en una columna de una matriz
+     * @param matrix Matriz de entrada
+     * @param col Índice de columna
+     * @return Valor máximo en la columna
+     */
+    public static double maxCol(double[][] matrix, int col) {
+        if (matrix == null || matrix.length == 0 || col < 0 || col >= matrix[0].length) {
+            return 0;
+        }
+
+        double max = matrix[0][col];
+        for (int i = 1; i < matrix.length; i++) {
+            if (matrix[i][col] > max) {
+                max = matrix[i][col];
+            }
+        }
+        return max;
+    }
+
+    /**
+     * Encuentra el índice del valor máximo en un array
+     * @param array Array de entrada
+     * @return Índice del valor máximo
+     */
+    public static int argmax(double[] array) {
+        if (array == null || array.length == 0) return -1;
+
+        int maxIdx = 0;
+        double maxVal = array[0];
+
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] > maxVal) {
+                maxVal = array[i];
+                maxIdx = i;
+            }
+        }
+        return maxIdx;
+    }
+
+    /**
+     * Encuentra índices donde la condición es verdadera
+     * Equivalente a find() de MATLAB
+     * @param array Array de entrada
+     * @param condition Condición a evaluar
+     * @return Array de índices donde la condición es verdadera
+     */
+    public static int[] find(double[] array, java.util.function.DoublePredicate condition) {
+        if (array == null) return new int[0];
+
+        java.util.List<Integer> indices = new java.util.ArrayList<>();
+        for (int i = 0; i < array.length; i++) {
+            if (condition.test(array[i])) {
+                indices.add(i);
+            }
+        }
+
+        return indices.stream().mapToInt(Integer::intValue).toArray();
+    }
+
+    /**
+     * Verifica si un array está vacío (todos ceros o sin elementos)
+     * @param array Array a verificar
+     * @return true si está vacío
+     */
+    public static boolean isEmpty(int[] array) {
+        return array == null || array.length == 0;
+    }
+
+    /**
+     * Suma todos los elementos de un array
+     * @param array Array de entrada
+     * @return Suma de elementos
+     */
+    public static double sum(double[] array) {
+        if (array == null || array.length == 0) return 0;
+
+        double sum = 0;
+        for (double value : array) {
+            sum += value;
+        }
+        return sum;
+    }
+
+    /**
+     * Suma todos los elementos de un array de enteros
+     * @param array Array de entrada
+     * @return Suma de elementos
+     */
+    public static int sum(int[] array) {
+        if (array == null || array.length == 0) return 0;
+
+        int sum = 0;
+        for (int value : array) {
+            sum += value;
+        }
+        return sum;
+    }
+
 }

@@ -1,5 +1,7 @@
 package me.julionxn.nobaitc.util;
 
+import java.util.Arrays;
+
 public class FormatHelper {
 
     private static final String[] letters = new String[]{
@@ -65,6 +67,19 @@ public class FormatHelper {
         }
 
         return sb.toString();
+    }
+
+    public static void printMatrix(double[][] matrix) {
+        StringBuilder sb = new StringBuilder("[");
+        for (double[] row : matrix) {
+            sb.append("[");
+            for (double value : row) {
+                sb.append(String.format("%.4f", value)).append(", ");
+            }
+            sb.append("],").append("\n");
+        }
+        sb.append("]");
+        System.out.println(sb);
     }
 
 }

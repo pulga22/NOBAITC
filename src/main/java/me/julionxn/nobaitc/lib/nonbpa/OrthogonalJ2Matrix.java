@@ -1,4 +1,4 @@
-package me.julionxn.nobaitc.lib;
+package me.julionxn.nobaitc.lib.nonbpa;
 
 public class OrthogonalJ2Matrix {
 

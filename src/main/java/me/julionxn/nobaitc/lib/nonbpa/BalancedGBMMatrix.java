@@ -1,4 +1,4 @@
-package me.julionxn.nobaitc.lib;
+package me.julionxn.nobaitc.lib.nonbpa;
 
 import java.util.Arrays;
 

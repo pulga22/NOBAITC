@@ -1,6 +1,10 @@
 package me.julionxn.nobaitc.lib;
 
+import me.julionxn.nobaitc.lib.nonbpa.BalancedGBMMatrix;
+import me.julionxn.nobaitc.lib.nonbpa.OrthogonalJ2Matrix;
+import me.julionxn.nobaitc.lib.nonbpa.VIFSMatrix;
 import me.julionxn.nobaitc.models.FractionResult;
+import me.julionxn.nobaitc.util.FormatHelper;
 
 import java.util.*;
 import java.util.stream.IntStream;
@@ -9,10 +13,12 @@ public class NONBPAGeneratorService {
 
     private final BalancedGBMMatrix gbmCalculator;
     private final OrthogonalJ2Matrix j2Calculator;
+    private final VIFSMatrix vifsCalculator;
 
     public NONBPAGeneratorService() {
         this.gbmCalculator = new BalancedGBMMatrix();
         this.j2Calculator = new OrthogonalJ2Matrix();
+        this.vifsCalculator = new VIFSMatrix();
     }
 
     /**
@@ -22,7 +28,7 @@ public class NONBPAGeneratorService {
         if (design.length > 9) return false;
 
         int tr = Arrays.stream(design).reduce(1, (a, b) -> a * b);
-        int lcm = calculateLCM(design);
+        int lcm = MatlabFunctions.calculateLCM(design);
 
         return tr == lcm;
     }
@@ -33,7 +39,7 @@ public class NONBPAGeneratorService {
     public DesignParameters calculateParameters(int[] design) {
         int tr = Arrays.stream(design).reduce(1, (a, b) -> a * b);
         int factors = design.length;
-        int lcm = calculateLCM(design);
+        int lcm = MatlabFunctions.calculateLCM(design);
         int gl = factors + 2;
         int maxLevel = Arrays.stream(design).max().orElse(0);
         int sfMin = Math.max(gl, maxLevel);
@@ -73,7 +79,7 @@ public class NONBPAGeneratorService {
         double[][] nonbaReflexMatrix = createReflexMatrix(matrixEffects, fractionSize);
 
         // Generar números aleatorios sin repetición
-        int[] randomStarts = generateRandomNumbers(1, params.tr, numberOfFractions);
+        int[] randomStarts = MatlabFunctions.nonRepeatableRandomNumbers(1, params.tr, numberOfFractions);
 
         return generateFractionsFromStarts(design, fractionSize, nonbaReflexMatrix, randomStarts);
     }
@@ -177,84 +183,12 @@ public class NONBPAGeneratorService {
             // Calcular métricas
             double gbm = gbmCalculator.calculateGBM(fraction, design);
             double j2 = j2Calculator.calculateJ2(fraction);
+            double[] vifs = vifsCalculator.calculate(fraction);
 
-            // Convertir fracción a string para mostrar
-            String fractionData = formatFraction(fraction);
-
-            results.add(new FractionResult(i + 1, fractionData, gbm, j2, fraction));
+            results.add(new FractionResult(i + 1, gbm, j2, vifs, fraction));
         }
 
         return results;
-    }
-
-    /**
-     * Formatea una fracción para mostrar en la tabla
-     */
-    private String formatFraction(double[][] fraction) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
-        for (int i = 0; i < Math.min(3, fraction.length); i++) { // Mostrar solo las primeras 3 filas
-            if (i > 0) sb.append("; ");
-            sb.append(Arrays.toString(fraction[i]));
-        }
-        if (fraction.length > 3) {
-            sb.append("; ...]");
-        } else {
-            sb.append("]");
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Calcula el LCM de un array
-     */
-    public int calculateLCM(int[] numbers) {
-        int result = numbers[0];
-        for (int i = 1; i < numbers.length; i++) {
-            result = lcm(result, numbers[i]);
-        }
-        return result;
-    }
-
-    /**
-     * Calcula LCM de dos números
-     */
-    private int lcm(int a, int b) {
-        return (a * b) / gcd(a, b);
-    }
-
-    private int gcd(int a, int b) {
-        while (b > 0) {
-            int temp = b;
-            b = a % b;
-            a = temp;
-        }
-        return a;
-    }
-
-    /**
-     * Genera números aleatorios sin repetición
-     */
-    private int[] generateRandomNumbers(int min, int max, int count) {
-        if (max - min + 1 < count) {
-            throw new IllegalArgumentException("No se pueden generar " + count + " números únicos en el rango");
-        }
-
-        int[] result = new int[count];
-        boolean[] used = new boolean[max - min + 1];
-        Random random = new Random();
-
-        for (int i = 0; i < count; i++) {
-            int num;
-            do {
-                num = random.nextInt(max - min + 1) + min;
-            } while (used[num - min]);
-
-            used[num - min] = true;
-            result[i] = num;
-        }
-
-        return result;
     }
 
     /**

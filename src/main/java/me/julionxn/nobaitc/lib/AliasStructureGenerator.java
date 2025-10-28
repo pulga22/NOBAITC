@@ -4,10 +4,6 @@ import me.julionxn.nobaitc.util.FormatHelper;
 
 import java.util.*;
 
-/**
- * Generador de estructura de alias para diseños factoriales fraccionados
- * Traducción y optimización del código MATLAB original
- */
 public class AliasStructureGenerator {
 
     private final double[][] array;
@@ -26,7 +22,6 @@ public class AliasStructureGenerator {
     private int doble; // Número de interacciones de 2 factores
     private int triple; // Número de interacciones de 3 factores
 
-    // Matrices de letras generadas dinámicamente
     private String[] renglonLetras;
     private String[][] matrixLetras;
 
@@ -73,7 +68,7 @@ public class AliasStructureGenerator {
     }
 
     /**
-     * PASO 1-3: Calcula la matriz de correlaciones
+     * PASO 1-3
      */
     private double[][] calcularCorrelaciones() {
         // Generar las combinaciones de letras
@@ -86,9 +81,6 @@ public class AliasStructureGenerator {
         return MatlabFunctions.corrcoef(matrizModelo);
     }
 
-    /**
-     * Construye la matriz del modelo con todas las columnas de efectos e interacciones
-     */
     private double[][] construirMatrizModelo() {
         List<double[]> columnas = new ArrayList<>();
 
@@ -104,7 +96,6 @@ public class AliasStructureGenerator {
             maximos[j] = max;
         }
 
-        // Normalizar columnas principales (efectos principales)
         double[][] columnasNormalizadas = new double[n][m];
         for (int j = 0; j < n; j++) {
             for (int i = 0; i < m; i++) {
@@ -113,7 +104,6 @@ public class AliasStructureGenerator {
             columnas.add(columnasNormalizadas[j]);
         }
 
-        // Generar interacciones de 2 factores
         for (int i = 0; i < n; i++) {
             for (int j = i + 1; j < n; j++) {
                 double[] interaccion = multiplicarColumnas(columnasNormalizadas[i], columnasNormalizadas[j]);
@@ -121,7 +111,6 @@ public class AliasStructureGenerator {
             }
         }
 
-        // Generar interacciones de 3 factores
         if (n > 2) {
             for (int i = 0; i < n; i++) {
                 for (int j = i + 1; j < n; j++) {
@@ -163,19 +152,16 @@ public class AliasStructureGenerator {
         char[] letras = "ABCDEFGHJ".toCharArray(); // Nota: usa J en lugar de I
         List<String> combinaciones = new ArrayList<>();
 
-        // Efectos principales
         for (int i = 0; i < n; i++) {
             combinaciones.add(String.valueOf(letras[i]));
         }
 
-        // Interacciones de 2 factores
         for (int i = 0; i < n; i++) {
             for (int j = i + 1; j < n; j++) {
                 combinaciones.add("" + letras[i] + letras[j]);
             }
         }
 
-        // Interacciones de 3 factores
         if (n > 2) {
             for (int i = 0; i < n; i++) {
                 for (int j = i + 1; j < n; j++) {
@@ -186,11 +172,9 @@ public class AliasStructureGenerator {
             }
         }
 
-        // Convertir a array
         renglonLetras = combinaciones.toArray(new String[0]);
         L = renglonLetras.length;
 
-        // Generar matrixLetras (repeticiones)
         int numRepeticiones = L;
         matrixLetras = new String[L][numRepeticiones];
         for (int i = 0; i < L; i++) {
@@ -199,13 +183,11 @@ public class AliasStructureGenerator {
     }
 
     /**
-     * PASO 4: Procesa la matriz de correlaciones
+     * PASO 4
      */
     private void paso4() {
-        // Triangular inferior
         T = MatlabFunctions.tril(matrizCorrelaciones);
 
-        // Encontrar máximo absoluto (excluyendo diagonal)
         double maxCorr = 0;
         for (int i = 0; i < T.length; i++) {
             for (int j = 0; j < T[i].length; j++) {
@@ -217,7 +199,6 @@ public class AliasStructureGenerator {
 
         VL = maxCorr * ponderacion;
 
-        // Matriz de valores absolutos
         W = new double[T.length][T[0].length];
         for (int i = 0; i < T.length; i++) {
             for (int j = 0; j < T[i].length; j++) {
@@ -232,7 +213,6 @@ public class AliasStructureGenerator {
         A = W.length;
         L = W[0].length;
 
-        // Calcular me, doble, triple
         me = n;
         doble = MatlabFunctions.nchoosek(n, 2);
         triple = n > 2 ? MatlabFunctions.nchoosek(n, 3) : 0;
@@ -253,13 +233,11 @@ public class AliasStructureGenerator {
     }
 
     /**
-     * PASO 5: Calcula la estructura de alias
+     * PASO 5
      */
     private void paso5() {
-        // Buscar correlaciones superiores al VL
         double[][] revW = buscarCorrelacionesSuperioresAlVL();
 
-        // Verificar si hay alias
         int sumaVectorAlias = contarAlias(revW);
 
         if (sumaVectorAlias == 0) {
@@ -272,14 +250,13 @@ public class AliasStructureGenerator {
         } else {
             // Localizar y asignar correlaciones
             double[][] D = localizarCorrelacionesSuperioresAlVL(revW);
-            FormatHelper.printMatrix(D);
             double[][] CH = asignarCorrelacionesInferioresAlVL(D);
             MSZ = cambioDeSignos(CH);
         }
     }
 
     /**
-     * Busca correlaciones superiores al valor límite
+     * Busca correlaciones superiores
      */
     private double[][] buscarCorrelacionesSuperioresAlVL() {
         double[][] revW = new double[A][L];
@@ -319,55 +296,141 @@ public class AliasStructureGenerator {
         return suma;
     }
 
-    /**
-     * Localiza correlaciones superiores al VL y determina alias principales
-     */
     private double[][] localizarCorrelacionesSuperioresAlVL(double[][] eM) {
-        // Clasificar renglones según donde tienen correlaciones
+        System.out.println("________________EM_0_______________");
+        FormatHelper.printMatrix(eM);
+        System.out.println("ME: " + me);
+
         int[] vecceros = new int[L];
 
         for (int vv = 0; vv < A; vv++) {
-            double maxMe = MatlabFunctions.maxInRange(eM[vv], 0, me);
-            double maxDoble = MatlabFunctions.maxInRange(eM[vv], me, me + doble);
-            double maxTotal = MatlabFunctions.max(eM[vv]);
+            double fencuentra = MatlabFunctions.maxInRange(eM[vv], 0, me);
+            double ffencuentra = MatlabFunctions.maxInRange(eM[vv], me, me + doble);
+            double fffencuentra = MatlabFunctions.max(eM[vv]);
 
-            if (maxTotal == 0) {
+            if (fffencuentra == 0) {
                 vecceros[vv] = 0;
-            } else if (maxMe != 0) {
+            } else if (fencuentra != 0) {
                 vecceros[vv] = 1;
-            } else if (maxDoble != 0) {
+            } else if (ffencuentra != 0) {
                 vecceros[vv] = 2;
             }
         }
 
-        // Procesar renglones tipo 1 (correlacionados con efectos principales)
         for (int fx = me; fx < A; fx++) {
             if (vecceros[fx] == 1) {
-                analizarRenglonDeMe(eM, fx);
+                double[] rengexamin1 = eM[fx].clone();
+                double[] vctr = Arrays.copyOfRange(rengexamin1, 0, me);
+
+                int h = MatlabFunctions.argmax(vctr);
+                double r = vctr[h];
+
+                if (r != 0) {
+                    // Limpiar vctr
+                    for (int c = 0; c < me; c++) {
+                        if (vctr[h] > vctr[c]) {
+                            vctr[c] = 0;
+                        } else if (Math.abs(vctr[h] - vctr[c]) < 0.0001) {
+                            if (h != c) {
+                                vctr[c] = 0;
+                            }
+                        }
+                    }
+
+                    System.arraycopy(vctr, 0, eM[fx], 0, me);
+
+                    // Poner ceros en la segunda parte
+                    //todo: chechar esto
+                    for (int i = me; i < L; i++) {
+                        eM[fx][i] = 0;
+                    }
+
+                    // Poner ceros en toda la columna fx
+                    //todo: checar esto
+                    for (int i = 0; i < A; i++) {
+                        eM[i][fx] = 0;
+                    }
+                }
             }
         }
 
-        // Procesar renglones tipo 2 (correlacionados con interacciones de 2 factores)
         for (int vx = me; vx < A; vx++) {
             if (vecceros[vx] == 2) {
-                analizarRenglonesDe2FI(eM, vx);
+                double[] rengloncoaexaminar = eM[vx].clone();
+
+                double[] rangoDobles = Arrays.copyOfRange(rengloncoaexaminar, me, me + doble);
+                double vc = MatlabFunctions.max(rangoDobles);
+
+                if (vc != 0) {
+                    double[] vctrr = Arrays.copyOfRange(rengloncoaexaminar, me, me + doble);
+                    int hg = MatlabFunctions.argmax(vctrr);
+                    double rg = vctrr[hg];
+
+                    if (rg != 0) {
+                        // Limpiar vctrr
+                        for (int cc = 0; cc < doble; cc++) {
+                            if (vctrr[hg] > vctrr[cc]) {
+                                vctrr[cc] = 0;
+                            } else if (Math.abs(vctrr[hg] - vctrr[cc]) < 0.0001) {
+                                if (hg != cc) {
+                                    vctrr[cc] = 0;
+                                }
+                            }
+                        }
+
+                        //todo: checar
+                        Arrays.fill(eM[vx], 0);
+
+                        System.arraycopy(vctrr, 0, eM[vx], me, doble);
+
+                        for (int i = 0; i < A; i++) {
+                            eM[i][vx] = 0;
+                        }
+                    }
+                }
             }
         }
 
-        // Reclasificar para interacciones de 3 factores
         if (triple > 0) {
             for (int gk = me + doble; gk < A; gk++) {
-                double maxMeDoble = MatlabFunctions.maxInRange(eM[gk], 0, me + doble);
-                double max3 = MatlabFunctions.maxInRange(eM[gk], me + doble, L);
-                if (maxMeDoble == 0 && max3 != 0) {
+                double ffffencuentra = MatlabFunctions.maxInRange(eM[gk], 0, me + doble);
+                double fff3encuentra = MatlabFunctions.maxInRange(eM[gk], me + doble, L);
+
+                if (ffffencuentra == 0 && fff3encuentra != 0) {
                     vecceros[gk] = 3;
                 }
             }
-
-            // Procesar renglones tipo 3
             for (int vxx = me + doble; vxx < A; vxx++) {
                 if (vecceros[vxx] == 3) {
-                    analizarRenglonesDe3FI(eM, vxx);
+                    double[] rengloncoaexaminartres = eM[vxx].clone();
+
+                    double ir = MatlabFunctions.max(rengloncoaexaminartres);
+
+                    if (ir != 0) {
+                        double[] vctrrr = Arrays.copyOfRange(rengloncoaexaminartres, me + doble, L);
+
+                        int hgg = MatlabFunctions.argmax(vctrrr);
+                        double rgg = vctrrr[hgg];
+
+                        if (rgg != 0) {
+                            for (int ccc = 0; ccc < triple; ccc++) {
+                                if (vctrrr[hgg] > vctrrr[ccc]) {
+                                    vctrrr[ccc] = 0;
+                                } else if (Math.abs(vctrrr[hgg] - vctrrr[ccc]) < 0.0001) {
+                                    if (hgg != ccc) {
+                                        vctrrr[ccc] = 0;
+                                    }
+                                }
+                            }
+
+                            System.arraycopy(vctrrr, 0, eM[vxx], me + doble, triple);
+
+                            // Poner ceros en toda la columna vxx
+                            for (int i = 0; i < A; i++) {
+                                eM[i][vxx] = 0;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -376,97 +439,10 @@ public class AliasStructureGenerator {
     }
 
     /**
-     * Analiza renglón correlacionado con efectos principales
-     */
-    private void analizarRenglonDeMe(double[][] eM, int fila) {
-        double[] renglon = eM[fila].clone();
-
-        // Solo considerar la parte de efectos principales
-        double[] vctr = Arrays.copyOfRange(renglon, 0, me);
-
-        // Encontrar el máximo
-        int maxIdx = MatlabFunctions.argmax(vctr);
-        double maxVal = vctr[maxIdx];
-
-        if (maxVal != 0) {
-            // Poner en cero todos los valores menores al máximo
-            for (int c = 0; c < me; c++) {
-                if (vctr[maxIdx] > vctr[c]) {
-                    vctr[c] = 0;
-                } else if (Math.abs(vctr[maxIdx] - vctr[c]) < 0.0001 && maxIdx != c) {
-                    vctr[c] = 0;
-                }
-            }
-
-            // Actualizar renglón
-            System.arraycopy(vctr, 0, eM[fila], 0, me);
-
-            // Poner en cero la columna correspondiente
-            for (int i = 0; i < A; i++) {
-                eM[i][fila] = 0;
-            }
-        }
-    }
-
-    /**
-     * Analiza renglón correlacionado con interacciones de 2 factores
-     */
-    private void analizarRenglonesDe2FI(double[][] eM, int fila) {
-        double[] vctr = Arrays.copyOfRange(eM[fila], me, me + doble);
-
-        double maxVal = MatlabFunctions.max(vctr);
-        if (maxVal == 0) return;
-
-        int maxIdx = MatlabFunctions.argmax(vctr);
-
-        // Limpiar el renglón
-        for (int c = 0; c < vctr.length; c++) {
-            if (vctr[maxIdx] > vctr[c]) {
-                vctr[c] = 0;
-            } else if (Math.abs(vctr[maxIdx] - vctr[c]) < 0.0001 && maxIdx != c) {
-                vctr[c] = 0;
-            }
-        }
-
-        // Actualizar
-        System.arraycopy(vctr, 0, eM[fila], me, doble);
-
-        for (int i = 0; i < A; i++) {
-            eM[i][fila] = 0;
-        }
-    }
-
-    /**
-     * Analiza renglón correlacionado con interacciones de 3 factores
-     */
-    private void analizarRenglonesDe3FI(double[][] eM, int fila) {
-        double[] vctr = Arrays.copyOfRange(eM[fila], me + doble, L);
-
-        double maxVal = MatlabFunctions.max(vctr);
-        if (maxVal == 0) return;
-
-        int maxIdx = MatlabFunctions.argmax(vctr);
-
-        for (int c = 0; c < vctr.length; c++) {
-            if (vctr[maxIdx] > vctr[c]) {
-                vctr[c] = 0;
-            } else if (Math.abs(vctr[maxIdx] - vctr[c]) < 0.0001 && maxIdx != c) {
-                vctr[c] = 0;
-            }
-        }
-
-        System.arraycopy(vctr, 0, eM[fila], me + doble, triple);
-
-        for (int i = 0; i < A; i++) {
-            eM[i][fila] = 0;
-        }
-    }
-
-    /**
      * Asigna correlaciones inferiores al VL
      */
     private double[][] asignarCorrelacionesInferioresAlVL(double[][] D) {
-        // UD: Matriz sin unos en la diagonal
+
         double[][] UD = new double[A][L];
         for (int dd = 0; dd < A; dd++) {
             for (int i = 0; i < L; i++) {
@@ -478,9 +454,8 @@ public class AliasStructureGenerator {
             }
         }
 
-        // MFL: Asignar valores
         double[][] MFL = new double[A][L];
-        for (int f = 0; f < A; f++) {
+        for (int f = me; f < A; f++) {
             double maxRenglon = MatlabFunctions.max(D[f]);
             if (f < me || maxRenglon == 0) {
                 System.arraycopy(UD[f], 0, MFL[f], 0, L);
@@ -489,7 +464,6 @@ public class AliasStructureGenerator {
             }
         }
 
-        // ML: Limpiar columnas con valores
         double[][] ML = new double[A][L];
         for (int ff = 0; ff < L; ff++) {
             System.arraycopy(MFL[ff], 0, ML[ff], 0, L);
@@ -501,7 +475,6 @@ public class AliasStructureGenerator {
             }
         }
 
-        // MZ: Proceso iterativo de asignación
         double[][] MZ = new double[A][L];
         int[] vecAyuda = new int[L];
 
@@ -518,7 +491,6 @@ public class AliasStructureGenerator {
             vecAyuda[ll] = tieneValor ? 1 : 0;
         }
 
-        // Proceso de limpieza
         for (int ee = me; ee < A; ee++) {
             if (vecAyuda[ee] == 0) {
                 for (int uu = me; uu < L; uu++) {
@@ -533,7 +505,6 @@ public class AliasStructureGenerator {
             }
         }
 
-        // MX: Seleccionar máximos por renglón
         double[][] MX = new double[A][L];
         for (int fff = 0; fff < A; fff++) {
             double[] renglon = MZ[fff].clone();
@@ -552,7 +523,6 @@ public class AliasStructureGenerator {
             System.arraycopy(renglon, 0, MX[fff], 0, L);
         }
 
-        // CH: Limpiar columnas y agregar diagonal
         double[][] CH = new double[L][L];
         for (int eee = 0; eee < L; eee++) {
             System.arraycopy(MX[eee], 0, CH[eee], 0, L);
@@ -564,12 +534,10 @@ public class AliasStructureGenerator {
             }
         }
 
-        // Agregar diagonal para efectos principales
         for (int ss = 0; ss < me; ss++) {
             CH[ss][ss] = 1;
         }
 
-        // Agregar diagonal para efectos con alias
         for (int sss = me; sss < L; sss++) {
             double maxCol = MatlabFunctions.maxCol(CH, sss);
             if (maxCol != 0) {
@@ -577,7 +545,6 @@ public class AliasStructureGenerator {
             }
         }
 
-        // Verificar que todos tengan alias
         int numeroAlias = 0;
         for (int y = 0; y < L; y++) {
             boolean tieneAlias = false;
@@ -590,7 +557,6 @@ public class AliasStructureGenerator {
             if (tieneAlias) numeroAlias++;
         }
 
-        // Completar alias faltantes
         if (numeroAlias < L) {
             for (int yy = me; yy < L; yy++) {
                 double maxRen = MatlabFunctions.max(CH[yy]);
@@ -622,8 +588,6 @@ public class AliasStructureGenerator {
 
         return MSZ;
     }
-
-    // ==================== CLASE INTERNA: AliasStructure ====================
 
     /**
      * Representa la estructura de alias resultante
@@ -672,22 +636,18 @@ public class AliasStructureGenerator {
             for (String efecto : efectos) {
                 List<AliasPair> alias = aliasMap.get(efecto);
                 if (alias != null && !alias.isEmpty()) {
-                    System.out.println("\n============");
-                    System.out.println("  EFECTO");
-                    System.out.println("  " + efecto);
-                    System.out.println("     =");
-
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(" |>| Efecto: ").append(efecto).append(" = ");
                     for (AliasPair par : alias) {
-                        System.out.printf(" %+f\n", par.coeficiente);
-                        System.out.println("  " + par.efecto);
+                        sb.append(" ").append(par.coeficiente).append(" ").append(par.efecto).append(" + ");
                     }
+                    System.out.println(sb);
                 }
             }
 
             System.out.println("\n============================================");
         }
 
-        // Getters
         public double[][] getMatrizAlias() { return matrizAlias; }
         public String[] getEfectos() { return efectos; }
         public Map<String, List<AliasPair>> getAliasMap() { return aliasMap; }
@@ -711,8 +671,6 @@ public class AliasStructureGenerator {
             return String.format("%+.4f %s", coeficiente, efecto);
         }
     }
-
-    // ==================== GETTERS ====================
 
     public double[][] getMatrizCorrelaciones() { return matrizCorrelaciones; }
     public double[][] getMSZ() { return MSZ; }

@@ -75,8 +75,29 @@ public class FormatHelper {
             sb.append("[");
             for (double value : row) {
                 sb.append(String.format("%.4f", value)).append(", ");
+                //sb.append(value).append(", ");
             }
             sb.append("],").append("\n");
+        }
+        sb.append("]");
+        System.out.println(sb);
+    }
+
+    public static void printMatrix(double[] matrix){
+        StringBuilder sb = new StringBuilder();
+        sb.append("[").append("\n");
+        for (double value : matrix) {
+            sb.append(value).append(", ");
+        }
+        sb.append("]");
+        System.out.println(sb);
+    }
+
+    public static void printMatrix(int[] matrix){
+        StringBuilder sb = new StringBuilder();
+        sb.append("[").append("\n");
+        for (double value : matrix) {
+            sb.append(value).append(", \n");
         }
         sb.append("]");
         System.out.println(sb);

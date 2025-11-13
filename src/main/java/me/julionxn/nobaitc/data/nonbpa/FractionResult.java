@@ -1,4 +1,4 @@
-package me.julionxn.nobaitc.models;
+package me.julionxn.nobaitc.data.nonbpa;
 
 import javafx.beans.property.*;
 import me.julionxn.nobaitc.util.FormatHelper;

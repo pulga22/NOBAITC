@@ -43,7 +43,7 @@ public class MainController implements Initializable {
     // Crear botones para cada módulo
     private void setupModuleButtons() {
         Button nonbpaButton = createModuleButton(
-                "Experimental Designs Tools",
+                "NONBPA",
                 "Genera fracciones semi-balanceadas\nsemi-ortogonales",
                 """
                 Módulo: Experimental Designs Tools
@@ -57,6 +57,13 @@ public class MainController implements Initializable {
                 this::loadNONBPAModule
         );
 
+        Button aliasButton = createModuleButton(
+                "Alias Structure",
+                "...",
+                "...",
+                this::loadAliasModule
+        );
+
         Button futureModuleButton = createModuleButton(
                 "Otro",
                 "Próximamente disponible",
@@ -65,7 +72,7 @@ public class MainController implements Initializable {
         );
         futureModuleButton.setDisable(true);
 
-        moduleButtonsContainer.getChildren().addAll(nonbpaButton, futureModuleButton);
+        moduleButtonsContainer.getChildren().addAll(nonbpaButton, aliasButton, futureModuleButton);
     }
 
     private Button createModuleButton(String title, String smallDescription, String moduleDescription, Runnable action) {
@@ -81,11 +88,20 @@ public class MainController implements Initializable {
 
     @FXML
     private void loadNONBPAModule() {
+        loadModule("nonbpa-view.fxml");
+    }
+
+    private void loadAliasModule() {
+        loadModule("alias-structure-view.fxml");
+    }
+
+    private void loadModule(String viewFile){
         try {
-            FXMLLoader loader = new FXMLLoader(MainApplication.getResourceURL("fxml/nonbpa-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(MainApplication.getResourceURL("fxml/" + viewFile));
             mainBorderPane.setCenter(loader.load());
         } catch (IOException e) {
-            showError("Error al cargar el módulo NONBPA", e.getMessage());
+            e.printStackTrace();
+            showError("Error al cargar el módulo " + viewFile, e.getMessage());
         }
     }
 

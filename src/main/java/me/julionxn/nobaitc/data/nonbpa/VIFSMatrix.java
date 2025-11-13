@@ -1,6 +1,6 @@
-package me.julionxn.nobaitc.lib.nonbpa;
+package me.julionxn.nobaitc.data.nonbpa;
 
-import me.julionxn.nobaitc.lib.MatlabFunctions;
+import me.julionxn.nobaitc.data.MatlabFunctions;
 
 public class VIFSMatrix {
 

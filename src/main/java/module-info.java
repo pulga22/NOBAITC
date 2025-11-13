@@ -3,15 +3,16 @@ module me.julionxn.nobaitc {
     requires javafx.fxml;
     requires java.desktop;
     requires org.controlsfx.controls;
+    requires static lombok;
 
     exports me.julionxn.nobaitc;
     exports me.julionxn.nobaitc.controllers;
     exports me.julionxn.nobaitc.models;
-    exports me.julionxn.nobaitc.lib;
+    exports me.julionxn.nobaitc.data;
 
     opens me.julionxn.nobaitc to javafx.fxml;
     opens me.julionxn.nobaitc.controllers to javafx.fxml;
-    opens me.julionxn.nobaitc.models to javafx.fxml, javafx.base;
-    exports me.julionxn.nobaitc.lib.nonbpa;
+    opens me.julionxn.nobaitc.data.nonbpa to javafx.fxml, javafx.base;
+    exports me.julionxn.nobaitc.data.nonbpa;
 
 }

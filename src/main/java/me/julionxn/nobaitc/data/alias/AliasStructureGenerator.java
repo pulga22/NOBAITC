@@ -1,5 +1,6 @@
-package me.julionxn.nobaitc.lib;
+package me.julionxn.nobaitc.data.alias;
 
+import me.julionxn.nobaitc.data.MatlabFunctions;
 import me.julionxn.nobaitc.util.FormatHelper;
 
 import java.util.*;
@@ -27,7 +28,6 @@ public class AliasStructureGenerator {
 
     // Resultado final
     private double[][] MSZ;
-    private AliasStructure aliasStructure;
 
     /**
      * Constructor principal
@@ -62,9 +62,7 @@ public class AliasStructureGenerator {
         paso5();
 
         // Generar estructura de alias
-        aliasStructure = new AliasStructure(MSZ, renglonLetras, matrixLetras, me);
-
-        return aliasStructure;
+        return new AliasStructure(MSZ, renglonLetras, matrixLetras, me);
     }
 
     /**
@@ -588,92 +586,4 @@ public class AliasStructureGenerator {
 
         return MSZ;
     }
-
-    /**
-     * Representa la estructura de alias resultante
-     */
-    public static class AliasStructure {
-        private final double[][] matrizAlias;
-        private final String[] efectos;
-        private final String[][] matrizLetras;
-        private final int numEfectosPrincipales;
-        private final Map<String, List<AliasPair>> aliasMap;
-
-        public AliasStructure(double[][] MSZ, String[] renglonLetras, String[][] matrixLetras, int me) {
-            this.matrizAlias = MSZ;
-            this.efectos = renglonLetras;
-            this.matrizLetras = matrixLetras;
-            this.numEfectosPrincipales = me;
-            this.aliasMap = new HashMap<>();
-            construirMapaAlias();
-        }
-
-        /**
-         * Construye el mapa de alias para fácil acceso
-         */
-        private void construirMapaAlias() {
-            for (int x = 0; x < efectos.length; x++) {
-                List<AliasPair> pares = new ArrayList<>();
-
-                for (int xx = 0; xx < matrizAlias.length; xx++) {
-                    if (matrizAlias[xx][x] != 0) {
-                        pares.add(new AliasPair(matrizAlias[xx][x], matrizLetras[xx][x]));
-                    }
-                }
-
-                if (!pares.isEmpty()) {
-                    aliasMap.put(efectos[x], pares);
-                }
-            }
-        }
-
-        /**
-         * Imprime la estructura de alias
-         */
-        public void print() {
-            System.out.println("\n============ ESTRUCTURA DE ALIAS ============");
-
-            for (String efecto : efectos) {
-                List<AliasPair> alias = aliasMap.get(efecto);
-                if (alias != null && !alias.isEmpty()) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(" |>| Efecto: ").append(efecto).append(" = ");
-                    for (AliasPair par : alias) {
-                        sb.append(" ").append(par.coeficiente).append(" ").append(par.efecto).append(" + ");
-                    }
-                    System.out.println(sb);
-                }
-            }
-
-            System.out.println("\n============================================");
-        }
-
-        public double[][] getMatrizAlias() { return matrizAlias; }
-        public String[] getEfectos() { return efectos; }
-        public Map<String, List<AliasPair>> getAliasMap() { return aliasMap; }
-        public int getNumEfectosPrincipales() { return numEfectosPrincipales; }
-    }
-
-    /**
-     * Representa un par de alias (coeficiente + efecto)
-     */
-    public static class AliasPair {
-        public double coeficiente;
-        public String efecto;
-
-        public AliasPair(double coeficiente, String efecto) {
-            this.coeficiente = coeficiente;
-            this.efecto = efecto;
-        }
-
-        @Override
-        public String toString() {
-            return String.format("%+.4f %s", coeficiente, efecto);
-        }
-    }
-
-    public double[][] getMatrizCorrelaciones() { return matrizCorrelaciones; }
-    public double[][] getMSZ() { return MSZ; }
-    public String[] getRenglonLetras() { return renglonLetras; }
-    public AliasStructure getAliasStructure() { return aliasStructure; }
 }

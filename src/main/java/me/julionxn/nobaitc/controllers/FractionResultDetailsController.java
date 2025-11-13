@@ -12,7 +12,7 @@ import org.controlsfx.control.spreadsheet.GridBase;
 import org.controlsfx.control.spreadsheet.SpreadsheetCell;
 import org.controlsfx.control.spreadsheet.SpreadsheetCellType;
 import org.controlsfx.control.spreadsheet.SpreadsheetView;
-import me.julionxn.nobaitc.models.FractionResult;
+import me.julionxn.nobaitc.data.nonbpa.FractionResult;
 import me.julionxn.nobaitc.util.FormatHelper;
 
 import java.util.ArrayList;
